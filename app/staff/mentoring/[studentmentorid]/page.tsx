@@ -1,0 +1,97 @@
+import { prisma } from "@/lib/prisma";
+import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
+import StudentMentoringForm from "./StudentMentoringForm";
+
+export async function saveMentoring(formData: FormData) {
+  "use server";
+
+  const studentmentorid = Number(formData.get("studentmentorid"));
+  const studentmentoringid = formData.get("studentmentoringid");
+
+  if (studentmentoringid) {
+    // UPDATE
+    await prisma.studentmentoring.update({
+      where: {
+        studentmentoringid: Number(studentmentoringid),
+      },
+      data: {
+        dateofmentoring: formData.get("dateofmentoring") ? new Date(formData.get("dateofmentoring") as string) : null,
+        scheduledmeetingdate: formData.get("scheduledmeetingdate") ? new Date(formData.get("scheduledmeetingdate") as string) : null,
+        nextmentoringdate: formData.get("nextmentoringdate") ? new Date(formData.get("nextmentoringdate") as string) : null,
+        issuesdiscussed: formData.get("issuesdiscussed") as string,
+        mentoringmeetingagenda: formData.get("mentoringmeetingagenda") as string,
+        attendancestatus: formData.get("attendancestatus") as string,
+        absentremarks: formData.get("absentremarks") as string,
+        isparentpresent: formData.get("isparentpresent") === "on",
+        parentname: formData.get("parentname") as string,
+        parentmobileno: formData.get("parentmobileno") as string,
+        parentsopinion: formData.get("parentsopinion") as string,
+        studentsopinion: formData.get("studentsopinion") as string,
+        staffopinion: formData.get("staffopinion") as string,
+        stresslevel: formData.get("stresslevel") as string,
+        learnertype: formData.get("learnertype") as string,
+        modified: new Date(),
+      },
+    });
+  } else {
+    // CREATE
+    await prisma.studentmentoring.create({
+      data: {
+        studentmentorid,
+        dateofmentoring: formData.get("dateofmentoring") ? new Date(formData.get("dateofmentoring") as string) : null,
+        scheduledmeetingdate: formData.get("scheduledmeetingdate") ? new Date(formData.get("scheduledmeetingdate") as string) : null,
+        nextmentoringdate: formData.get("nextmentoringdate") ? new Date(formData.get("nextmentoringdate") as string) : null,
+        issuesdiscussed: formData.get("issuesdiscussed") as string,
+        mentoringmeetingagenda: formData.get("mentoringmeetingagenda") as string,
+        attendancestatus: formData.get("attendancestatus") as string,
+        absentremarks: formData.get("absentremarks") as string,
+        isparentpresent: formData.get("isparentpresent") === "on",
+        parentname: formData.get("parentname") as string,
+        parentmobileno: formData.get("parentmobileno") as string,
+        parentsopinion: formData.get("parentsopinion") as string,
+        studentsopinion: formData.get("studentsopinion") as string,
+        staffopinion: formData.get("staffopinion") as string,
+        stresslevel: formData.get("stresslevel") as string,
+        learnertype: formData.get("learnertype") as string,
+      },
+    });
+  }
+
+  // ✅ refresh staff page
+  revalidatePath("/staff");
+
+  // ✅ redirect
+  redirect("/staff");
+}
+
+async function MentoringPage({
+  params,
+}: {
+  params: Promise<{ studentmentorid: string }>;
+}) {
+  const { studentmentorid } = await params;
+  const smId = Number(studentmentorid);
+
+  const mentoring = await prisma.studentmentoring.findFirst({
+    where: { studentmentorid: smId },
+    include: {
+      studentmentor: {
+        include: {
+          student: true,
+          staff: true,
+        },
+      },
+    },
+  });
+
+  return (
+    <StudentMentoringForm
+      studentmentorid={smId}
+      existingMentoring={mentoring}
+      action={saveMentoring}
+    />
+  );
+}
+
+export default MentoringPage;

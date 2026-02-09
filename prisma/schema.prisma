@@ -1,0 +1,85 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model staff {
+  staffid       Int             @id @default(autoincrement())
+  staffname     String          @db.VarChar(100)
+  mobileno      String?         @db.VarChar(15)
+  emailaddress  String?         @db.VarChar(100)
+  password      String          @db.VarChar(255)
+  created       DateTime?       @default(now()) @db.Timestamp(6)
+  modified      DateTime?       @default(now()) @db.Timestamp(6)
+  studentmentor studentmentor[]
+}
+
+model student {
+  studentid     Int             @id @default(autoincrement())
+  studentname   String          @db.VarChar(100)
+  enrollmentno  String          @unique @db.VarChar(50)
+  password      String          @db.VarChar(255)
+  mobileno      String?         @db.VarChar(15)
+  emailaddress  String?         @db.VarChar(100)
+  created       DateTime?       @default(now()) @db.Timestamp(6)
+  modified      DateTime?       @default(now()) @db.Timestamp(6)
+  studentmentor studentmentor[]
+}
+
+model studentmentor {
+  studentmentorid  Int                @id @default(autoincrement())
+  studentid        Int
+  staffid          Int
+  fromdate         DateTime           @db.Date
+  todate           DateTime?          @db.Date
+  created          DateTime?          @default(now()) @db.Timestamp(6)
+  modified         DateTime?          @default(now()) @db.Timestamp(6)
+  staff            staff              @relation(fields: [staffid], references: [staffid], onDelete: Cascade, onUpdate: NoAction, map: "fk_studentmentor_staff")
+  student          student            @relation(fields: [studentid], references: [studentid], onDelete: Cascade, onUpdate: NoAction, map: "fk_studentmentor_student")
+  studentmentoring studentmentoring[]
+}
+
+model studentmentoring {
+  studentmentoringid     Int                @id @default(autoincrement())
+  studentmentorid        Int
+  dateofmentoring        DateTime?          @db.Date
+  scheduledmeetingdate   DateTime?          @db.Date
+  nextmentoringdate      DateTime?          @db.Date
+  issuesdiscussed        String?
+  mentoringmeetingagenda String?
+  attendancestatus       attendance_status? @default(Present)
+  absentremarks          String?
+  isparentpresent        Boolean?           @default(false)
+  parentname             String?            @db.VarChar(100)
+  parentmobileno         String?            @db.VarChar(15)
+  studentsopinion        String?
+  parentsopinion         String?
+  staffopinion           String?
+  stresslevel            stress_level?
+  learnertype            learner_type?
+  created                DateTime?          @default(now()) @db.Timestamp(6)
+  modified               DateTime?          @default(now()) @db.Timestamp(6)
+  studentmentor          studentmentor      @relation(fields: [studentmentorid], references: [studentmentorid], onDelete: Cascade, onUpdate: NoAction, map: "fk_studentmentoring_studentmentor")
+}
+
+enum attendance_status {
+  Present
+  Absent
+}
+
+enum learner_type {
+  Slow
+  Average
+  Fast
+  Advanced
+}
+
+enum stress_level {
+  Low
+  Medium
+  High
+}

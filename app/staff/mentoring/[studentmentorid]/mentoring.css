@@ -1,0 +1,79 @@
+/* Page background */
+body {
+  background: #f5f7fb;
+}
+
+/* Header */
+.gradient-header {
+  background: linear-gradient(135deg, #4f46e5, #6366f1);
+}
+
+/* Section cards */
+.section-card {
+  border: none;
+  border-radius: 16px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+}
+
+/* Soft backgrounds */
+.bg-soft-purple {
+  background: #f4f1ff;
+}
+
+.bg-soft-orange {
+  background: #fff4e5;
+}
+
+/* Inputs */
+.form-control,
+.form-select {
+  border-radius: 12px;
+  border: 1px solid #ddd;
+  padding: 12px 14px;
+  font-size: 15px;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 0.15rem rgba(99, 102, 241, 0.25);
+}
+
+/* Textarea */
+textarea {
+  resize: none;
+  min-height: 90px;
+}
+
+/* Student & Mentor info card */
+.card p {
+  margin-bottom: 6px;
+  font-size: 15px;
+}
+
+.card p b {
+  color: #374151;
+}
+
+/* Button */
+.btn-gradient {
+  background: linear-gradient(135deg, #6366f1, #4f46e5);
+  border: none;
+  border-radius: 14px;
+  color: #fff;
+  font-weight: 600;
+  padding: 14px;
+  transition: all 0.3s ease;
+}
+
+.btn-gradient:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(79, 70, 229, 0.35);
+}
+
+/* Responsive spacing */
+@media (max-width: 768px) {
+  .container {
+    padding: 0 14px;
+  }
+}
