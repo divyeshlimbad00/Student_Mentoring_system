@@ -6,7 +6,6 @@ type PageProps = {
 };
 
 export default async function StaffDashboard({ params }: PageProps) {
-  // ✅ MUST await params in Next.js 15
   const { id } = await params;
   const staffId = Number(id);
 
@@ -16,7 +15,7 @@ export default async function StaffDashboard({ params }: PageProps) {
 
   const allocations = await prisma.studentmentor.findMany({
     where: {
-      staffid: staffId, // ✅ now valid Int
+      staffid: staffId, 
     },
     include: {
       student: true,

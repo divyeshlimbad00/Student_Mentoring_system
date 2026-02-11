@@ -21,7 +21,6 @@ export async function saveMentoring(formData: FormData) {
         nextmentoringdate: formData.get("nextmentoringdate") ? new Date(formData.get("nextmentoringdate") as string) : null,
         issuesdiscussed: formData.get("issuesdiscussed") as string,
         mentoringmeetingagenda: formData.get("mentoringmeetingagenda") as string,
-        attendancestatus: formData.get("attendancestatus") as string,
         absentremarks: formData.get("absentremarks") as string,
         isparentpresent: formData.get("isparentpresent") === "on",
         parentname: formData.get("parentname") as string,
@@ -44,7 +43,6 @@ export async function saveMentoring(formData: FormData) {
         nextmentoringdate: formData.get("nextmentoringdate") ? new Date(formData.get("nextmentoringdate") as string) : null,
         issuesdiscussed: formData.get("issuesdiscussed") as string,
         mentoringmeetingagenda: formData.get("mentoringmeetingagenda") as string,
-        attendancestatus: formData.get("attendancestatus") as string,
         absentremarks: formData.get("absentremarks") as string,
         isparentpresent: formData.get("isparentpresent") === "on",
         parentname: formData.get("parentname") as string,
@@ -58,10 +56,8 @@ export async function saveMentoring(formData: FormData) {
     });
   }
 
-  // ✅ refresh staff page
   revalidatePath("/staff");
 
-  // ✅ redirect
   redirect("/staff");
 }
 

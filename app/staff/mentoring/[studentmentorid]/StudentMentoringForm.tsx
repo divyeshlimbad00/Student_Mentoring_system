@@ -91,24 +91,6 @@ export default function StudentMentoringForm({
                     required
                   />
                 </div>
-                <div>
-                  <label className="block text-sm font-bold text-slate-700 mb-2">Scheduled Date</label>
-                  <input
-                    type="date"
-                    name="scheduledmeetingdate"
-                    className="w-full rounded-xl border-slate-200 bg-slate-50 px-4 py-3 focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all font-medium"
-                    defaultValue={existingMentoring?.scheduledmeetingdate ? new Date(existingMentoring.scheduledmeetingdate).toISOString().split('T')[0] : ''}
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-bold text-slate-700 mb-2">Next Follow-up</label>
-                  <input
-                    type="date"
-                    name="nextmentoringdate"
-                    className="w-full rounded-xl border-slate-200 bg-slate-50 px-4 py-3 focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all font-medium"
-                    defaultValue={existingMentoring?.nextmentoringdate ? new Date(existingMentoring.nextmentoringdate).toISOString().split('T')[0] : ''}
-                  />
-                </div>
               </div>
               <div>
                 <label className="block text-sm font-bold text-slate-700 mb-2">Meeting Agenda</label>
@@ -141,16 +123,6 @@ export default function StudentMentoringForm({
                     placeholder="Detailed notes on what was discussed regarding academic or personal issues..."
                   />
                 </div>
-                <div>
-                  <label className="block text-sm font-bold text-slate-700 mb-2">General Remarks / Description</label>
-                  <textarea
-                    name="description"
-                    className="w-full rounded-xl border-slate-200 bg-slate-50 px-4 py-3 focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all"
-                    rows={2}
-                    defaultValue={existingMentoring?.description || ''}
-                    placeholder="Any additional context or observations..."
-                  />
-                </div>
               </div>
             </Card>
           </section>
@@ -163,19 +135,6 @@ export default function StudentMentoringForm({
             </h2>
             <Card className="p-8 border-0 shadow-lg ring-1 ring-slate-900/5">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <div>
-                  <label className="block text-sm font-bold text-slate-700 mb-2">Attendance</label>
-                  <select
-                    name="attendancestatus"
-                    className="w-full rounded-xl border-slate-200 bg-slate-50 px-4 py-3 focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all cursor-pointer"
-                    defaultValue={existingMentoring?.attendancestatus || 'Present'}
-                  >
-                    <option value="">Select Status</option>
-                    <option value="Present">✅ Present</option>
-                    <option value="Absent">❌ Absent</option>
-                    <option value="Late">⏰ Late</option>
-                  </select>
-                </div>
                 <div>
                   <label className="block text-sm font-bold text-slate-700 mb-2">Stress Level</label>
                   <select
@@ -202,16 +161,6 @@ export default function StudentMentoringForm({
                     <option value="Average">⚖️ Average Learner</option>
                     <option value="Slow">🐢 Slow Learner</option>
                   </select>
-                </div>
-                <div className="lg:col-span-1">
-                  <label className="block text-sm font-bold text-slate-700 mb-2">Absent Remarks</label>
-                  <input
-                    type="text"
-                    name="absentremarks"
-                    className="w-full rounded-xl border-slate-200 bg-slate-50 px-4 py-3 focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all"
-                    defaultValue={existingMentoring?.absentremarks || ''}
-                    placeholder="Why was student absent?"
-                  />
                 </div>
               </div>
             </Card>

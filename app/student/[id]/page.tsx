@@ -37,7 +37,7 @@ export default async function DetailUser({ params }: Props) {
       },
     },
     orderBy: {
-      studentmentoringid: 'desc' // Get the latest session if multiple exist, though findFirst gets one.
+      studentmentoringid: 'desc',
     }
   });
 
@@ -79,7 +79,6 @@ export default async function DetailUser({ params }: Props) {
   return (
     <div className="min-h-screen bg-slate-50 py-12 px-4 sm:px-6">
       <div className="max-w-4xl mx-auto">
-        {/* Header */}
         <div className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Mentoring Session</h1>
@@ -94,7 +93,6 @@ export default async function DetailUser({ params }: Props) {
         </div>
 
         <div className="grid gap-6">
-          {/* Main Info Card */}
           <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
             <div className="bg-slate-900/5 px-6 py-4 border-b border-slate-200 flex items-center gap-3">
               <span className="text-xl">👤</span>
@@ -108,7 +106,6 @@ export default async function DetailUser({ params }: Props) {
             </div>
           </div>
 
-          {/* Session Timing & Status */}
           <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
             <div className="bg-blue-50/50 px-6 py-4 border-b border-blue-100 flex items-center gap-3">
               <span className="text-xl">📅</span>
@@ -118,26 +115,9 @@ export default async function DetailUser({ params }: Props) {
               <InfoItem label="Mentoring Date" value={formatDate(data.dateofmentoring)} />
               <InfoItem label="Scheduled Date" value={formatDate(data.scheduledmeetingdate)} />
               <InfoItem label="Next Session" value={formatDate(data.nextmentoringdate)} />
-
-              <div className="mb-4">
-                <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Attendance Status</div>
-                <div className={`inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium border ${data.attendancestatus === 'Present'
-                    ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                    : data.attendancestatus === 'Absent'
-                      ? 'bg-rose-50 text-rose-700 border-rose-200'
-                      : 'bg-slate-50 text-slate-600 border-slate-200'
-                  }`}>
-                  {data.attendancestatus || 'Not Recorded'}
-                </div>
-              </div>
-
-              {data.attendancestatus === 'Absent' && (
-                <InfoItem label="Absent Remarks" value={data.absentremarks} fullWidth />
-              )}
             </div>
           </div>
 
-          {/* Discussion Details */}
           <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
             <div className="bg-indigo-50/50 px-6 py-4 border-b border-indigo-100 flex items-center gap-3">
               <span className="text-xl">💬</span>
@@ -146,11 +126,9 @@ export default async function DetailUser({ params }: Props) {
             <div className="p-6 grid md:grid-cols-1 gap-6">
               <InfoItem label="Meeting Agenda" value={data.mentoringmeetingagenda} />
               <InfoItem label="Issues Discussed" value={data.issuesdiscussed} />
-              <InfoItem label="Description / Notes" value={data.description} />
             </div>
           </div>
 
-          {/* Feedback & Opinions */}
           <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
             <div className="bg-amber-50/50 px-6 py-4 border-b border-amber-100 flex items-center gap-3">
               <span className="text-xl">📝</span>
@@ -164,7 +142,6 @@ export default async function DetailUser({ params }: Props) {
             </div>
           </div>
 
-          {/* Parent Involvement */}
           <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
             <div className="bg-emerald-50/50 px-6 py-4 border-b border-emerald-100 flex items-center gap-3">
               <span className="text-xl">👨‍👩‍👦</span>

@@ -38,7 +38,6 @@ export default async function StaffList() {
                   <th className="px-6 py-5 text-center w-16">#</th>
                   <th className="px-6 py-5">Staff Details</th>
                   <th className="px-6 py-5">Contact Info</th>
-                  <th className="px-6 py-5 text-center">Status</th>
                   <th className="px-6 py-5 text-right">Joined</th>
                 </tr>
               </thead>
@@ -104,11 +103,6 @@ export default async function StaffList() {
                             </span>
                           )}
                         </div>
-                      </td>
-                      <td className="px-6 py-5 text-center">
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 border border-emerald-200/60">
-                          Active
-                        </span>
                       </td>
                       <td className="px-6 py-5 text-right text-sm text-slate-500 tab-nums">
                         {s.created ? new Date(s.created).toLocaleDateString('en-US', {
