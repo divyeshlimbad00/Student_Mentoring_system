@@ -39,12 +39,13 @@ export default async function StaffList() {
                   <th className="px-6 py-5">Staff Details</th>
                   <th className="px-6 py-5">Contact Info</th>
                   <th className="px-6 py-5 text-right">Joined</th>
+                  <th className="px-6 py-5 text-center">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {staff.length === 0 ? (
                   <tr>
-                    <td colSpan={5} className="px-6 py-12 text-center">
+                    <td colSpan={6} className="px-6 py-12 text-center">
                       <div className="flex flex-col items-center justify-center space-y-3">
                         <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center text-3xl">
                           👨‍🏫
@@ -110,6 +111,16 @@ export default async function StaffList() {
                           month: 'short',
                           day: 'numeric'
                         }) : '-'}
+                      </td>
+                      <td className="px-6 py-5 text-center">
+                        <div className="flex items-center justify-center gap-2">
+                          <Link
+                            href={`/admin/staff/${s.staffid}/edit`}
+                            className="inline-flex items-center px-3 py-1 rounded-md text-xs font-medium bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 transition-colors"
+                          >
+                            ✎ Edit
+                          </Link>
+                        </div>
                       </td>
                     </tr>
                   ))

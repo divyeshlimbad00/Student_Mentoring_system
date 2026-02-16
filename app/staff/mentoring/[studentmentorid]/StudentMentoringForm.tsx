@@ -7,12 +7,14 @@ type Props = {
   studentmentorid: number;
   existingMentoring: any | null;
   action: (formData: FormData) => void;
+  staffId?: number;
 };
 
 export default function StudentMentoringForm({
   studentmentorid,
   existingMentoring,
   action,
+  staffId,
 }: Props) {
   const isEdit = !!existingMentoring;
   const pageTitle = isEdit ? "Update Mentoring Session" : "Create New Session";
@@ -255,7 +257,7 @@ export default function StudentMentoringForm({
           <div className="sticky bottom-4 z-20">
             <div className="absolute inset-0 bg-white/50 backdrop-blur-xl -z-10 rounded-2xl shadow-2xl border border-white/40"></div>
             <div className="flex gap-4 p-2">
-              <Link href="/staff" className="flex-1 bg-white hover:bg-slate-50 text-slate-700 font-bold py-4 px-8 rounded-xl transition-all shadow-sm border border-slate-200 text-center">
+              <Link href={staffId ? `/staff/${staffId}` : "/staff"} className="flex-1 bg-white hover:bg-slate-50 text-slate-700 font-bold py-4 px-8 rounded-xl transition-all shadow-sm border border-slate-200 text-center">
                 Cancel
               </Link>
               <button

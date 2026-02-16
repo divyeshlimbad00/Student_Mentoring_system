@@ -42,12 +42,13 @@ export default async function StudentList() {
                   <th className="px-6 py-5">Contact Info</th>
                   <th className="px-6 py-5 text-center">Enrollment No.</th>
                   <th className="px-6 py-5 text-right">Joined</th>
+                  <th className="px-6 py-5 text-center">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {students.length === 0 ? (
                   <tr>
-                    <td colSpan={5} className="px-6 py-16 text-center">
+                    <td colSpan={6} className="px-6 py-16 text-center">
                       <div className="flex flex-col items-center justify-center space-y-4">
                         <div className="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center text-4xl">
                           🎓
@@ -118,6 +119,16 @@ export default async function StudentList() {
                           month: 'short',
                           day: 'numeric'
                         }) : '-'}
+                      </td>
+                      <td className="px-6 py-5 text-center">
+                        <div className="flex items-center justify-center gap-2">
+                          <Link
+                            href={`/admin/student/${s.studentid}/edit`}
+                            className="inline-flex items-center px-3 py-1 rounded-md text-xs font-medium bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 transition-colors"
+                          >
+                            ✎ Edit
+                          </Link>
+                        </div>
                       </td>
                     </tr>
                   ))

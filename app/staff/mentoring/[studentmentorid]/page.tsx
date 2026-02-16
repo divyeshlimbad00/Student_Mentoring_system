@@ -56,8 +56,19 @@ export async function saveMentoring(formData: FormData) {
     });
   }
 
-  revalidatePath("/staff");
+  // determine staff id from the studentmentor relation so we can redirect
+  const sm = await prisma.studentmentor.findUnique({
+    where: { studentmentorid },
+  });
+  const staffId = sm?.staffid;
 
+  if (staffId) {
+    revalidatePath(`/staff/${staffId}`);
+    redirect(`/staff/${staffId}`);
+  }
+
+  // fallback to general staff page
+  revalidatePath("/staff");
   redirect("/staff");
 }
 
@@ -81,11 +92,23 @@ async function MentoringPage({
     },
   });
 
+  // if no mentoring record yet (creating new), fetch the studentmentor to get staff id
+  let staffId: number | null = null;
+  if (mentoring?.studentmentor?.staffid) {
+    staffId = mentoring.studentmentor.staffid;
+  } else {
+    const sm = await prisma.studentmentor.findUnique({
+      where: { studentmentorid: smId },
+    });
+    staffId = sm?.staffid ?? null;
+  }
+
   return (
     <StudentMentoringForm
       studentmentorid={smId}
       existingMentoring={mentoring}
       action={saveMentoring}
+      staffId={staffId ?? undefined}
     />
   );
 }
