@@ -5,128 +5,93 @@ import Link from 'next/link';
 export default function AddStudent() {
   async function createStudent(formData: FormData) {
     "use server";
-
     await prisma.student.create({
       data: {
         studentname: formData.get("studentname") as string,
         enrollmentno: formData.get("enrollmentno") as string,
         mobileno: formData.get("mobileno") as string,
         emailaddress: formData.get("emailaddress") as string,
-        password: "123456",
+        password: formData.get("password") as string,
       },
     });
-
     redirect("/admin/student");
   }
 
   return (
-    <div className="min-h-screen bg-slate-50/50 flex flex-col justify-center py-12 sm:px-6 lg:px-8 font-sans">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <h2 className="mt-6 text-center text-3xl font-extrabold text-slate-900 tracking-tight">
-          Register New Student
-        </h2>
-        <p className="mt-2 text-center text-sm text-slate-600">
-          Add a new student to the academic database.
-        </p>
-      </div>
+    <div className="min-h-screen bg-slate-50 font-sans relative">
+      <div className="absolute top-0 w-full h-64 bg-gradient-to-b from-green-100/50 to-transparent z-0 pointer-events-none" />
+      <header className="bg-white/80 backdrop-blur-md border-b border-gray-200 px-6 py-4 sticky top-0 z-20 shadow-sm">
+        <h1 className="text-xl font-bold text-gray-800">Register New Student</h1>
+        <p className="text-sm text-gray-500">Add a new student to the academic database</p>
+      </header>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="glass-card bg-white/80 backdrop-blur-xl py-8 px-4 shadow-xl border border-slate-200/60 sm:rounded-2xl sm:px-10">
-          <form action={createStudent} className="space-y-6">
+      <main className="max-w-lg mx-auto px-6 py-8 relative z-10">
+        <div className="bg-white border border-gray-200 rounded-2xl shadow-sm p-6 lg:p-8 hover:shadow-md transition-shadow relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-green-50/50 rounded-full translate-x-12 -translate-y-12 z-0" />
+          <form action={createStudent} className="space-y-5 relative z-10">
             <div>
-              <label htmlFor="studentname" className="block text-sm font-semibold text-slate-700 mb-1">
-                Student Name
+              <label htmlFor="studentname" className="block text-sm font-medium text-gray-700 mb-1">
+                Student Name <span className="text-red-500">*</span>
               </label>
-              <div className="relative rounded-md shadow-sm">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <span className="text-slate-400 sm:text-sm">🎓</span>
-                </div>
-                <input
-                  id="studentname"
-                  name="studentname"
-                  type="text"
-                  required
-                  className="block w-full pl-10 pr-3 py-3 border border-slate-300 rounded-lg leading-5 bg-white/50 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition duration-150 ease-in-out"
-                  placeholder="e.g. John Doe"
-                />
-              </div>
+              <input id="studentname" name="studentname" type="text" required
+                placeholder="e.g. Riya Shah"
+                className="w-full px-3 py-2.5 border border-gray-300 rounded-md text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
             </div>
 
             <div>
-              <label htmlFor="enrollmentno" className="block text-sm font-semibold text-slate-700 mb-1">
-                Enrollment Number
+              <label htmlFor="enrollmentno" className="block text-sm font-medium text-gray-700 mb-1">
+                Enrollment Number <span className="text-red-500">*</span>
               </label>
-              <div className="relative rounded-md shadow-sm">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <span className="text-slate-400 sm:text-sm">🆔</span>
-                </div>
-                <input
-                  id="enrollmentno"
-                  name="enrollmentno"
-                  type="text"
-                  required
-                  className="block w-full pl-10 pr-3 py-3 border border-slate-300 rounded-lg leading-5 bg-white/50 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition duration-150 ease-in-out"
-                  placeholder="e.g. 2023001"
-                />
-              </div>
+              <input id="enrollmentno" name="enrollmentno" type="text" required
+                placeholder="e.g. 220170107001"
+                className="w-full px-3 py-2.5 border border-gray-300 rounded-md text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
             </div>
 
             <div>
-              <label htmlFor="mobile" className="block text-sm font-semibold text-slate-700 mb-1">
-                Mobile Number
+              <label htmlFor="mobileno" className="block text-sm font-medium text-gray-700 mb-1">
+                Mobile Number <span className="text-red-500">*</span>
               </label>
-              <div className="relative rounded-md shadow-sm">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <span className="text-slate-400 sm:text-sm">📱</span>
-                </div>
-                <input
-                  id="mobileno"
-                  name="mobileno"
-                  type="text"
-                  required
-                  className="block w-full pl-10 pr-3 py-3 border border-slate-300 rounded-lg leading-5 bg-white/50 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition duration-150 ease-in-out"
-                  placeholder="e.g. 9025548592"
-                />
-              </div>
+              <input id="mobileno" name="mobileno" type="text" required
+                placeholder="e.g. 9876543210"
+                className="w-full px-3 py-2.5 border border-gray-300 rounded-md text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
             </div>
 
             <div>
-              <label htmlFor="email" className="block text-sm font-semibold text-slate-700 mb-1">
-                Email Address
+              <label htmlFor="emailaddress" className="block text-sm font-medium text-gray-700 mb-1">
+                Email Address <span className="text-red-500">*</span>
               </label>
-              <div className="relative rounded-md shadow-sm">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <span className="text-slate-400 sm:text-sm">📧</span>
-                </div>
-                <input
-                  id="emailaddress"
-                  name="emailaddress"
-                  type="text"
-                  required
-                  className="block w-full pl-10 pr-3 py-3 border border-slate-300 rounded-lg leading-5 bg-white/50 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition duration-150 ease-in-out"
-                  placeholder="e.g. john.doe@example.com"
-                />
-              </div>
+              <input id="emailaddress" name="emailaddress" type="email" required
+                placeholder="e.g. riya.shah@example.com"
+                className="w-full px-3 py-2.5 border border-gray-300 rounded-md text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
             </div>
 
-            <div className="pt-4 flex flex-col gap-3">
-              <button
-                type="submit"
-                className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0"
-              >
-                Create Student Profile
+            <div>
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+                Password <span className="text-red-500">*</span>
+              </label>
+              <input id="password" name="password" type="password" required
+                placeholder="Set a password"
+                className="w-full px-3 py-2.5 border border-gray-300 rounded-md text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
+
+            <div className="flex gap-3 pt-2">
+              <button type="submit"
+                className="flex-1 py-2.5 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white text-sm font-semibold rounded-lg shadow-sm hover:shadow hover:-translate-y-0.5 transition-all">
+                Register Student
               </button>
-
-              <Link
-                href="/admin/student"
-                className="w-full flex justify-center py-3 px-4 border border-slate-300 rounded-lg shadow-sm text-sm font-medium text-slate-700 bg-white hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200"
-              >
+              <Link href="/admin/student"
+                className="flex-1 py-2.5 text-center border border-gray-300 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors">
                 Cancel
               </Link>
             </div>
           </form>
         </div>
-      </div>
+      </main>
     </div>
   );
 }

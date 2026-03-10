@@ -10,7 +10,6 @@ export async function saveMentoring(formData: FormData) {
   const studentmentoringid = formData.get("studentmentoringid");
 
   if (studentmentoringid) {
-    // UPDATE
     await prisma.studentmentoring.update({
       where: {
         studentmentoringid: Number(studentmentoringid),
@@ -56,7 +55,6 @@ export async function saveMentoring(formData: FormData) {
     });
   }
 
-  // determine staff id from the studentmentor relation so we can redirect
   const sm = await prisma.studentmentor.findUnique({
     where: { studentmentorid },
   });
@@ -67,7 +65,6 @@ export async function saveMentoring(formData: FormData) {
     redirect(`/staff/${staffId}`);
   }
 
-  // fallback to general staff page
   revalidatePath("/staff");
   redirect("/staff");
 }
@@ -92,7 +89,6 @@ async function MentoringPage({
     },
   });
 
-  // if no mentoring record yet (creating new), fetch the studentmentor to get staff id
   let staffId: number | null = null;
   if (mentoring?.studentmentor?.staffid) {
     staffId = mentoring.studentmentor.staffid;

@@ -3,42 +3,42 @@ import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   try {
-     const { enrollment, password } = await req.json();
+    const { email, password } = await req.json();
 
     // Validate input
-     if (!enrollment || !password) {
+    if (!email || !password) {
       return NextResponse.json(
         { success: false, message: "All fields are required" },
         { status: 400 }
       );
     }
 
-    // Find student by enrollment number and verify other details
-    const student = await prisma.student.findFirst({
+    // Find admin by email address
+    const admin = await prisma.admin.findFirst({
       where: { 
-        enrollmentno: enrollment.trim(),
+        emailaddress: email.trim().toLowerCase(),
       },
     });
 
-    if (!student) {
+    if (!admin) {
       return NextResponse.json(
-        { success: false, message: "Student not found" },
+        { success: false, message: "Admin not found" },
         { status: 404 }
       );
     }
 
-     // Verify password
-     if (student.password !== password.trim()) {
+    // Verify password
+    if (admin.password !== password.trim()) {
       return NextResponse.json(
-         { success: false, message: "Password is incorrect" },
+        { success: false, message: "Password is incorrect" },
         { status: 401 }
       );
     }
 
-
     return NextResponse.json({
       success: true,
-      studentId: student.studentid,
+      adminId: admin.adminid,
+      adminname: admin.adminname,
       message: "Login successful",
     });
   } catch (error) {

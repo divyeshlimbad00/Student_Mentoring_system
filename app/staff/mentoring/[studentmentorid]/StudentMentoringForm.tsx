@@ -1,6 +1,4 @@
 "use client";
-import "./mentoring.css";
-import { Card } from "../../../components/ui/Card";
 import Link from "next/link";
 
 type Props = {
@@ -10,268 +8,202 @@ type Props = {
   staffId?: number;
 };
 
-export default function StudentMentoringForm({
-  studentmentorid,
-  existingMentoring,
-  action,
-  staffId,
-}: Props) {
+export default function StudentMentoringForm({ studentmentorid, existingMentoring, action, staffId }: Props) {
   const isEdit = !!existingMentoring;
-  const pageTitle = isEdit ? "Update Mentoring Session" : "Create New Session";
-  const pageDescription = isEdit
-    ? "Review and modify the details of this mentoring session."
-    : "Fill out the form below to record a new mentoring interaction.";
-  const themeColor = isEdit ? "indigo" : "blue"; // Distinct theme colors
+
+  const inputCls = "w-full px-4 py-3 border-2 border-slate-200 rounded-xl text-sm font-medium text-slate-800 bg-white/60 backdrop-blur-md placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all hover:border-slate-300 hover:bg-white/90";
+  const textareaCls = "w-full px-4 py-3 border-2 border-slate-200 rounded-xl text-sm font-medium text-slate-800 bg-white/60 backdrop-blur-md placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 resize-none transition-all hover:border-slate-300 hover:bg-white/90";
+  const labelCls = "block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2";
 
   return (
-    <div className="min-h-screen bg-slate-50 py-10 px-4">
-      <div className="max-w-5xl mx-auto">
-
-        {/* Top Navigation */}
-        <div className="mb-8">
-          <Link href="/staff" className="text-slate-500 hover:text-slate-800 transition-colors font-medium flex items-center gap-2">
-            ← Back to Dashboard
-          </Link>
+    <div className="min-h-screen bg-slate-50 font-sans relative overflow-x-hidden">
+      <div className="absolute top-0 w-full h-80 bg-gradient-to-br from-indigo-200 via-blue-100 to-transparent z-0 pointer-events-none" />
+      
+      <header className="bg-white/80 backdrop-blur-xl border-b border-gray-200 px-8 py-5 flex items-center justify-between sticky top-0 z-30 shadow-sm transition-all hover:bg-white/95">
+        <div>
+          <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-700 to-blue-600">
+            {isEdit ? "Update Mentoring Session" : "New Mentoring Session"}
+          </h1>
+          {existingMentoring?.studentmentor?.student && (
+            <p className="text-sm font-semibold text-gray-500 mt-1">
+              Student: <strong className="text-gray-800">{existingMentoring.studentmentor.student.studentname}</strong>
+            </p>
+          )}
         </div>
+        <Link
+          href={staffId ? `/staff/${staffId}` : "/staff"}
+          className="text-sm font-bold text-gray-600 bg-white border-2 border-gray-200 px-4 py-2 rounded-lg hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 flex items-center gap-2 transition-all shadow-sm hover:shadow"
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+          </svg>
+          Back
+        </Link>
+      </header>
 
-        {/* Header Section */}
-        <div className={`mb-8 p-8 rounded-3xl bg-gradient-to-r ${isEdit ? 'from-indigo-600 to-purple-600' : 'from-blue-600 to-cyan-600'} text-white shadow-xl relative overflow-hidden`}>
-          {/* Background Pattern */}
-          <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-10 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none"></div>
-
-          <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-            <div>
-              <div className="flex items-center gap-3 mb-2">
-                <span className="bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider border border-white/20">
-                  {isEdit ? "EDIT MODE" : "NEW ENTRY"}
-                </span>
-              </div>
-              <h1 className="text-4xl font-bold font-display mb-2 tracking-tight">{pageTitle}</h1>
-              <p className="text-blue-100 text-lg opacity-90 max-w-2xl">{pageDescription}</p>
-            </div>
-
-            {/* Student Info Pill */}
-            {existingMentoring?.studentmentor?.student && (
-              <div className="bg-white/10 backdrop-blur-md border border-white/20 p-4 rounded-2xl flex items-center gap-4 min-w-[200px]">
-                <div className="w-12 h-12 rounded-full bg-white text-blue-600 flex items-center justify-center font-bold text-xl shadow-lg">
-                  {existingMentoring.studentmentor.student.studentname.charAt(0)}
-                </div>
-                <div>
-                  <div className="text-xs text-blue-100 uppercase font-semibold">Student</div>
-                  <div className="font-bold text-white text-lg leading-tight">{existingMentoring.studentmentor.student.studentname}</div>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-
+      <main className="max-w-4xl mx-auto px-6 py-10 relative z-10">
         <form action={action} className="space-y-8">
           <input type="hidden" name="studentmentorid" value={studentmentorid} />
           {isEdit && (
-            <input
-              type="hidden"
-              name="studentmentoringid"
-              value={existingMentoring.studentmentoringid}
-            />
+            <input type="hidden" name="studentmentoringid" value={existingMentoring.studentmentoringid} />
           )}
 
-          {/* Meeting Information */}
-          <section>
-            <h2 className="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">
-              <span className={`w-8 h-8 rounded-lg ${isEdit ? 'bg-indigo-100 text-indigo-600' : 'bg-blue-100 text-blue-600'} flex items-center justify-center`}>📅</span>
-              Session Details
+          <section className="bg-white/90 backdrop-blur-xl border border-blue-100 rounded-3xl shadow-sm p-8 hover:shadow-xl hover:border-blue-300 transition-all relative overflow-hidden group">
+            <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-br from-blue-100/80 to-indigo-100/80 rounded-full translate-x-16 -translate-y-16 group-hover:scale-110 transition-transform duration-700 opacity-60 pointer-events-none" />
+            <h2 className="text-sm font-bold text-blue-600 uppercase tracking-widest mb-6 flex items-center gap-3 relative z-10">
+              <span className="w-8 h-1 bg-blue-300 rounded-full"></span> Session Details
             </h2>
-            <Card className="p-8 border-0 shadow-lg ring-1 ring-slate-900/5">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-                <div className="group">
-                  <label className="block text-sm font-bold text-slate-700 mb-2 group-focus-within:text-blue-600 transition-colors">Date of Mentoring <span className="text-red-500">*</span></label>
-                  <input
-                    type="date"
-                    name="dateofmentoring"
-                    className="w-full rounded-xl border-slate-200 bg-slate-50 px-4 py-3 focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all font-medium"
-                    defaultValue={existingMentoring?.dateofmentoring ? new Date(existingMentoring.dateofmentoring).toISOString().split('T')[0] : new Date().toISOString().split('T')[0]}
-                    required
-                  />
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6 relative z-10">
+              <div>
+                <label className={labelCls}>Date of Mentoring <span className="text-red-500">*</span></label>
+                <input type="date" name="dateofmentoring" required className={inputCls}
+                  defaultValue={existingMentoring?.dateofmentoring ? new Date(existingMentoring.dateofmentoring).toISOString().split('T')[0] : new Date().toISOString().split('T')[0]}
+                />
+              </div>
+            </div>
+            <div className="relative z-10">
+              <label className={labelCls}>Meeting Agenda</label>
+              <textarea name="mentoringmeetingagenda" rows={2} className={textareaCls}
+                placeholder="Ex: Discuss academic progress and career goals..."
+                defaultValue={existingMentoring?.mentoringmeetingagenda || ''}
+              />
+            </div>
+          </section>
+
+          <section className="bg-white/90 backdrop-blur-xl border border-purple-100 rounded-3xl shadow-sm p-8 hover:shadow-xl hover:border-purple-300 transition-all relative overflow-hidden group">
+            <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-br from-purple-100/80 to-fuchsia-100/80 rounded-full translate-x-16 -translate-y-16 group-hover:scale-110 transition-transform duration-700 opacity-60 pointer-events-none" />
+            <h2 className="text-sm font-bold text-purple-600 uppercase tracking-widest mb-6 flex items-center gap-3 relative z-10">
+              <span className="w-8 h-1 bg-purple-300 rounded-full"></span> Discussion Points
+            </h2>
+            <div className="relative z-10">
+              <label className={labelCls}>Issues Discussed</label>
+              <textarea name="issuesdiscussed" rows={3} className={textareaCls}
+                placeholder="Ex: Student mentioned difficulty in time management..."
+                defaultValue={existingMentoring?.issuesdiscussed || ''}
+              />
+            </div>
+          </section>
+
+          <section className="bg-white/90 backdrop-blur-xl border border-emerald-100 rounded-3xl shadow-sm p-8 hover:shadow-xl hover:border-emerald-300 transition-all relative overflow-hidden group">
+            <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-br from-emerald-100/80 to-teal-100/80 rounded-full translate-x-16 -translate-y-16 group-hover:scale-110 transition-transform duration-700 opacity-60 pointer-events-none" />
+            <h2 className="text-sm font-bold text-emerald-600 uppercase tracking-widest mb-6 flex items-center gap-3 relative z-10">
+              <span className="w-8 h-1 bg-emerald-300 rounded-full"></span> Student Status
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 relative z-10">
+              <div>
+                <label className={labelCls}>Stress Level</label>
+                <div className="relative">
+                  <select name="stresslevel" className={`${inputCls} appearance-none pr-10`} defaultValue={existingMentoring?.stresslevel || ''}>
+                    <option value="">Select level...</option>
+                    <option value="Low">🟢 Low</option>
+                    <option value="Medium">🟡 Medium</option>
+                    <option value="High">🔴 High</option>
+                  </select>
+                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-500">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                  </div>
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-bold text-slate-700 mb-2">Meeting Agenda</label>
-                <textarea
-                  name="mentoringmeetingagenda"
-                  className="w-full rounded-xl border-slate-200 bg-slate-50 px-4 py-3 focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all"
-                  rows={2}
-                  defaultValue={existingMentoring?.mentoringmeetingagenda || ''}
-                  placeholder="Briefly describe the purpose of this session..."
+                <label className={labelCls}>Learner Type</label>
+                <div className="relative">
+                  <select name="learnertype" className={`${inputCls} appearance-none pr-10`} defaultValue={existingMentoring?.learnertype || ''}>
+                    <option value="">Select type...</option>
+                    <option value="Fast">🚀 Fast Learner</option>
+                    <option value="Average">👍 Average Learner</option>
+                    <option value="Slow">⏱️ Slow Learner</option>
+                    <option value="Advanced">🌟 Advanced</option>
+                  </select>
+                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-500">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section className="bg-white/90 backdrop-blur-xl border border-amber-100 rounded-3xl shadow-sm p-8 hover:shadow-xl hover:border-amber-300 transition-all relative overflow-hidden group">
+            <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-br from-amber-100/80 to-orange-100/80 rounded-full translate-x-16 -translate-y-16 group-hover:scale-110 transition-transform duration-700 opacity-60 pointer-events-none" />
+            <h2 className="text-sm font-bold text-amber-600 uppercase tracking-widest mb-6 flex items-center gap-3 relative z-10">
+              <span className="w-8 h-1 bg-amber-300 rounded-full"></span> Opinions &amp; Feedback
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 relative z-10">
+              <div>
+                <label className={labelCls}>Student's Opinion</label>
+                <textarea name="studentsopinion" rows={3} className={textareaCls}
+                  placeholder="What the student expressed..."
+                  defaultValue={existingMentoring?.studentsopinion || ''}
                 />
               </div>
-            </Card>
-          </section>
-
-          {/* Discussion & Issues */}
-          <section>
-            <h2 className="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">
-              <span className={`w-8 h-8 rounded-lg ${isEdit ? 'bg-indigo-100 text-indigo-600' : 'bg-blue-100 text-blue-600'} flex items-center justify-center`}>💬</span>
-              Discussion Points
-            </h2>
-            <Card className="p-8 border-0 shadow-lg ring-1 ring-slate-900/5">
-              <div className="space-y-6">
-                <div>
-                  <label className="block text-sm font-bold text-slate-700 mb-2">Issues Discussed</label>
-                  <textarea
-                    name="issuesdiscussed"
-                    className="w-full rounded-xl border-slate-200 bg-slate-50 px-4 py-3 focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all"
-                    rows={4}
-                    defaultValue={existingMentoring?.issuesdiscussed || ''}
-                    placeholder="Detailed notes on what was discussed regarding academic or personal issues..."
-                  />
-                </div>
+              <div>
+                <label className={labelCls}>Staff's Assessment</label>
+                <textarea name="staffopinion" rows={3} className={textareaCls}
+                  placeholder="Your professional assessment..."
+                  defaultValue={existingMentoring?.staffopinion || ''}
+                />
               </div>
-            </Card>
+            </div>
           </section>
 
-          {/* Attendance & Status */}
-          <section>
-            <h2 className="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">
-              <span className={`w-8 h-8 rounded-lg ${isEdit ? 'bg-indigo-100 text-indigo-600' : 'bg-blue-100 text-blue-600'} flex items-center justify-center`}>📊</span>
-              Student Status
+          <section className="bg-white/90 backdrop-blur-xl border border-pink-100 rounded-3xl shadow-sm p-8 hover:shadow-xl hover:border-pink-300 transition-all relative overflow-hidden group">
+            <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-br from-pink-100/80 to-rose-100/80 rounded-full translate-x-16 -translate-y-16 group-hover:scale-110 transition-transform duration-700 opacity-60 pointer-events-none" />
+            <h2 className="text-sm font-bold text-pink-500 uppercase tracking-widest mb-6 flex items-center gap-3 relative z-10">
+              <span className="w-8 h-1 bg-pink-300 rounded-full"></span> Parent Interaction
             </h2>
-            <Card className="p-8 border-0 shadow-lg ring-1 ring-slate-900/5">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <div>
-                  <label className="block text-sm font-bold text-slate-700 mb-2">Stress Level</label>
-                  <select
-                    name="stresslevel"
-                    className="w-full rounded-xl border-slate-200 bg-slate-50 px-4 py-3 focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all cursor-pointer"
-                    defaultValue={existingMentoring?.stresslevel || ''}
-                  >
-                    <option value="">Select Level</option>
-                    <option value="Low">🟢 Low</option>
-                    <option value="Medium">🟡 Medium</option>
-                    <option value="High">🟠 High</option>
-                    <option value="Critical">🔴 Critical</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-bold text-slate-700 mb-2">Learner Type</label>
-                  <select
-                    name="learnertype"
-                    className="w-full rounded-xl border-slate-200 bg-slate-50 px-4 py-3 focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all cursor-pointer"
-                    defaultValue={existingMentoring?.learnertype || ''}
-                  >
-                    <option value="">Select Type</option>
-                    <option value="Fast">🚀 Fast Learner</option>
-                    <option value="Average">⚖️ Average Learner</option>
-                    <option value="Slow">🐢 Slow Learner</option>
-                  </select>
-                </div>
-              </div>
-            </Card>
-          </section>
-
-          {/* Parent Details */}
-          <section>
-            <h2 className="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">
-              <span className={`w-8 h-8 rounded-lg ${isEdit ? 'bg-indigo-100 text-indigo-600' : 'bg-blue-100 text-blue-600'} flex items-center justify-center`}>👨‍👩‍👧</span>
-              Parent Interaction
-            </h2>
-            <Card className="p-8 border-0 shadow-lg ring-1 ring-slate-900/5">
-              <div className="mb-6 p-4 bg-yellow-50 rounded-xl border border-yellow-100 flex items-center gap-3">
+            <div className="relative z-10">
+              <div className="flex items-center gap-4 mb-8 bg-pink-50/50 p-4 rounded-xl border border-pink-100 inline-flex cursor-pointer hover:bg-pink-100/50 transition-colors">
                 <input
                   type="checkbox"
                   name="isparentpresent"
                   id="isparentpresent"
-                  className="w-5 h-5 rounded text-blue-600 focus:ring-blue-500 border-gray-300"
+                  className="w-5 h-5 rounded border-2 border-pink-300 text-pink-600 focus:ring-pink-500 focus:ring-offset-2 cursor-pointer transition-colors"
                   defaultChecked={existingMentoring?.isparentpresent || false}
                 />
-                <label htmlFor="isparentpresent" className="font-bold text-slate-800 cursor-pointer select-none">Mark this checkbox if a parent was present during the meeting</label>
+                <label htmlFor="isparentpresent" className="text-sm font-bold text-slate-700 cursor-pointer select-none">
+                  Parent was present during this session
+                </label>
               </div>
-
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                 <div>
-                  <label className="block text-sm font-bold text-slate-700 mb-2">Parent Name</label>
-                  <input
-                    type="text"
-                    name="parentname"
-                    className="w-full rounded-xl border-slate-200 bg-slate-50 px-4 py-3 focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all"
+                  <label className={labelCls}>Parent Name</label>
+                  <input type="text" name="parentname" className={inputCls}
+                    placeholder="E.g. John Doe"
                     defaultValue={existingMentoring?.parentname || ''}
-                    placeholder="Name of parent attending"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-bold text-slate-700 mb-2">Parent Contact</label>
-                  <input
-                    type="text"
-                    name="parentmobileno"
-                    className="w-full rounded-xl border-slate-200 bg-slate-50 px-4 py-3 focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all"
+                  <label className={labelCls}>Parent Mobile</label>
+                  <input type="text" name="parentmobileno" className={inputCls}
+                    placeholder="Contact number"
                     defaultValue={existingMentoring?.parentmobileno || ''}
-                    placeholder="Mobile number"
                   />
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-bold text-slate-700 mb-2">Parent's Opinion / Feedback</label>
-                <textarea
-                  name="parentsopinion"
-                  className="w-full rounded-xl border-slate-200 bg-slate-50 px-4 py-3 focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all"
-                  rows={2}
+                <label className={labelCls}>Parent's Opinion</label>
+                <textarea name="parentsopinion" rows={2} className={textareaCls}
+                  placeholder="Feedback from parents..."
                   defaultValue={existingMentoring?.parentsopinion || ''}
-                  placeholder="Comments from the parent..."
                 />
               </div>
-            </Card>
-          </section>
-
-          {/* Feedback */}
-          <section>
-            <h2 className="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">
-              <span className={`w-8 h-8 rounded-lg ${isEdit ? 'bg-indigo-100 text-indigo-600' : 'bg-blue-100 text-blue-600'} flex items-center justify-center`}>📝</span>
-              Opinions & Uploads
-            </h2>
-            <Card className="p-8 border-0 shadow-lg ring-1 ring-slate-900/5">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                <div>
-                  <label className="block text-sm font-bold text-slate-700 mb-2">Student's Opinion</label>
-                  <textarea
-                    name="studentsopinion"
-                    className="w-full rounded-xl border-slate-200 bg-slate-50 px-4 py-3 focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all"
-                    rows={3}
-                    defaultValue={existingMentoring?.studentsopinion || ''}
-                    placeholder="What the student feels..."
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-bold text-slate-700 mb-2">Staff's Assessment</label>
-                  <textarea
-                    name="staffopinion"
-                    className="w-full rounded-xl border-slate-200 bg-slate-50 px-4 py-3 focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all"
-                    rows={3}
-                    defaultValue={existingMentoring?.staffopinion || ''}
-                    placeholder="Your professional assessment..."
-                  />
-                </div>
-              </div>
-            </Card>
-          </section>
-
-          {/* Action Button */}
-          <div className="sticky bottom-4 z-20">
-            <div className="absolute inset-0 bg-white/50 backdrop-blur-xl -z-10 rounded-2xl shadow-2xl border border-white/40"></div>
-            <div className="flex gap-4 p-2">
-              <Link href={staffId ? `/staff/${staffId}` : "/staff"} className="flex-1 bg-white hover:bg-slate-50 text-slate-700 font-bold py-4 px-8 rounded-xl transition-all shadow-sm border border-slate-200 text-center">
-                Cancel
-              </Link>
-              <button
-                type="submit"
-                className={`flex-[3] ${isEdit ? 'bg-indigo-600 hover:bg-indigo-700 shadow-indigo-500/30' : 'bg-blue-600 hover:bg-blue-700 shadow-blue-500/30'} text-white font-bold py-4 px-8 rounded-xl transition-all shadow-lg transform active:scale-[0.99] flex items-center justify-center gap-3 text-lg`}
-              >
-                {isEdit ? "Update Session Details" : "Save New Session"}
-              </button>
             </div>
-          </div>
-          <div className="h-12"></div> {/* Spacer */}
+          </section>
 
+          <div className="flex flex-col sm:flex-row gap-4 pt-4 pb-8">
+            <button type="submit"
+              className="flex-1 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-base font-bold rounded-2xl shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all uppercase tracking-wider flex items-center justify-center gap-2">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+              {isEdit ? "Update Session" : "Save Session Records"}
+            </button>
+            <Link
+              href={staffId ? `/staff/${staffId}` : "/staff"}
+              className="sm:w-1/3 py-4 text-center border-2 border-slate-200 text-slate-600 text-base font-bold rounded-2xl hover:bg-slate-50 hover:border-slate-300 hover:text-slate-800 transition-all uppercase tracking-wider"
+            >
+              Cancel
+            </Link>
+          </div>
         </form>
-      </div>
+      </main>
     </div>
   );
 }

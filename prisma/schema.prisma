@@ -1,10 +1,24 @@
 generator client {
   provider = "prisma-client"
-  output   = "../app/generated/prisma"
+  output   = "../lib/generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
+}
+
+model admin {
+  adminid          Int                @id @default(autoincrement())
+  adminname        String             @db.VarChar(100)
+  emailaddress     String             @unique @db.VarChar(100)
+  password         String             @db.VarChar(255)
+  mobileno         String?            @db.VarChar(15)
+  created          DateTime?          @default(now()) @db.Timestamp(6)
+  modified         DateTime?          @default(now()) @db.Timestamp(6)
+  staff            staff[]
+  student          student[]
+  studentmentor    studentmentor[]
+  studentmentoring studentmentoring[]
 }
 
 model staff {
@@ -13,8 +27,10 @@ model staff {
   mobileno      String?         @db.VarChar(15)
   emailaddress  String?         @db.VarChar(100)
   password      String          @db.VarChar(255)
+  adminid       Int?
   created       DateTime?       @default(now()) @db.Timestamp(6)
   modified      DateTime?       @default(now()) @db.Timestamp(6)
+  admin         admin?          @relation(fields: [adminid], references: [adminid], onUpdate: NoAction, map: "fk_staff_admin")
   studentmentor studentmentor[]
 }
 
@@ -25,8 +41,10 @@ model student {
   password      String          @db.VarChar(255)
   mobileno      String?         @db.VarChar(15)
   emailaddress  String?         @db.VarChar(100)
+  adminid       Int?
   created       DateTime?       @default(now()) @db.Timestamp(6)
   modified      DateTime?       @default(now()) @db.Timestamp(6)
+  admin         admin?          @relation(fields: [adminid], references: [adminid], onUpdate: NoAction, map: "fk_student_admin")
   studentmentor studentmentor[]
 }
 
@@ -36,34 +54,38 @@ model studentmentor {
   staffid          Int
   fromdate         DateTime           @db.Date
   todate           DateTime?          @db.Date
+  adminid          Int?
   created          DateTime?          @default(now()) @db.Timestamp(6)
   modified         DateTime?          @default(now()) @db.Timestamp(6)
+  admin            admin?             @relation(fields: [adminid], references: [adminid], onUpdate: NoAction, map: "fk_studentmentor_admin")
   staff            staff              @relation(fields: [staffid], references: [staffid], onDelete: Cascade, onUpdate: NoAction, map: "fk_studentmentor_staff")
   student          student            @relation(fields: [studentid], references: [studentid], onDelete: Cascade, onUpdate: NoAction, map: "fk_studentmentor_student")
   studentmentoring studentmentoring[]
 }
 
 model studentmentoring {
-  studentmentoringid     Int                @id @default(autoincrement())
+  studentmentoringid     Int           @id @default(autoincrement())
   studentmentorid        Int
-  dateofmentoring        DateTime?          @db.Date
-  scheduledmeetingdate   DateTime?          @db.Date
-  nextmentoringdate      DateTime?          @db.Date
+  dateofmentoring        DateTime?     @db.Date
+  scheduledmeetingdate   DateTime?     @db.Date
+  nextmentoringdate      DateTime?     @db.Date
   issuesdiscussed        String?
   mentoringmeetingagenda String?
-  attendancestatus       attendance_status? @default(Present)
+  attendancestatus       String?       @default("Present") @db.VarChar(10)
   absentremarks          String?
-  isparentpresent        Boolean?           @default(false)
-  parentname             String?            @db.VarChar(100)
-  parentmobileno         String?            @db.VarChar(15)
+  isparentpresent        Boolean?      @default(false)
+  parentname             String?       @db.VarChar(100)
+  parentmobileno         String?       @db.VarChar(15)
   studentsopinion        String?
   parentsopinion         String?
   staffopinion           String?
-  stresslevel            stress_level?
-  learnertype            learner_type?
-  created                DateTime?          @default(now()) @db.Timestamp(6)
-  modified               DateTime?          @default(now()) @db.Timestamp(6)
-  studentmentor          studentmentor      @relation(fields: [studentmentorid], references: [studentmentorid], onDelete: Cascade, onUpdate: NoAction, map: "fk_studentmentoring_studentmentor")
+  stresslevel            String?       @db.VarChar(10)
+  learnertype            String?       @db.VarChar(10)
+  adminid                Int?
+  created                DateTime?     @default(now()) @db.Timestamp(6)
+  modified               DateTime?     @default(now()) @db.Timestamp(6)
+  admin                  admin?        @relation(fields: [adminid], references: [adminid], onUpdate: NoAction, map: "fk_studentmentoring_admin")
+  studentmentor          studentmentor @relation(fields: [studentmentorid], references: [studentmentorid], onDelete: Cascade, onUpdate: NoAction, map: "fk_studentmentoring_studentmentor")
 }
 
 enum attendance_status {

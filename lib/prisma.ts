@@ -2,7 +2,7 @@
 import { Pool } from 'pg';
 import { PrismaPg } from '@prisma/adapter-pg';
 // 1. Import from the CUSTOM output path you set in schema.prisma
-import { PrismaClient } from '../app/generated/prisma/client';
+import { PrismaClient } from './generated/prisma/client';
 
 const connectionString = `${process.env.DATABASE_URL}`;
 const pool = new Pool({ connectionString });

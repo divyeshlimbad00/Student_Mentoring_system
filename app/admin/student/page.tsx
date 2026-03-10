@@ -1,160 +1,182 @@
-import { prisma } from "@/lib/prisma";
-import Link from "next/link";
+'use client';
 
-export default async function StudentList() {
-  const students = await prisma.student.findMany({
-    orderBy: {
-      studentname: 'asc'
-    }
-  });
+import Link from "next/link";
+import { useState, useEffect } from "react";
+
+export default function StudentList() {
+  const [students, setStudents] = useState<any[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filteredStudents, setFilteredStudents] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [deleteConfirm, setDeleteConfirm] = useState<{ id: number; name: string } | null>(null);
+  const [deleting, setDeleting] = useState(false);
+
+  useEffect(() => {
+    fetch('/api/student/get')
+      .then(r => r.json())
+      .then(data => { setStudents(data); setFilteredStudents(data); })
+      .catch(console.error)
+      .finally(() => setLoading(false));
+  }, []);
+
+  useEffect(() => {
+    if (!searchQuery.trim()) { setFilteredStudents(students); return; }
+    const q = searchQuery.toLowerCase();
+    setFilteredStudents(students.filter(s =>
+      s.studentname.toLowerCase().includes(q) ||
+      s.studentid.toString().includes(q) ||
+      s.emailaddress?.toLowerCase().includes(q) ||
+      s.enrollmentno?.toLowerCase().includes(q)
+    ));
+  }, [searchQuery, students]);
+
+  const handleDelete = async () => {
+    if (!deleteConfirm) return;
+    setDeleting(true);
+    try {
+      const res = await fetch(`/api/student/${deleteConfirm.id}`, { method: 'DELETE' });
+      if (res.ok) {
+        setStudents(prev => prev.filter(s => s.studentid !== deleteConfirm.id));
+        setFilteredStudents(prev => prev.filter(s => s.studentid !== deleteConfirm.id));
+        setDeleteConfirm(null);
+      } else { alert('Failed to delete student'); }
+    } catch { alert('Error deleting student'); }
+    finally { setDeleting(false); }
+  };
 
   return (
-    <div className="min-h-screen bg-slate-50/50 p-6 md:p-8 font-sans">
-      <div className="max-w-7xl mx-auto space-y-8">
+    <div className="min-h-screen bg-slate-50 font-sans relative">
+      <div className="absolute top-0 w-full h-64 bg-gradient-to-b from-green-100/50 to-transparent z-0 pointer-events-none" />
+      <header className="bg-white/80 backdrop-blur-md border-b border-gray-200 px-6 py-4 flex items-center justify-between sticky top-0 z-20 shadow-sm">
+        <div>
+          <h1 className="text-xl font-bold text-gray-800">Student Directory</h1>
+          <p className="text-sm text-gray-500">Manage student profiles and enrollment details</p>
+        </div>
+        <Link
+          href="/admin/student/add"
+          className="px-4 py-2 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white text-sm font-medium rounded-lg shadow-sm hover:shadow transition-all hover:-translate-y-0.5"
+        >
+          + Add Student
+        </Link>
+      </header>
 
-        {/* Header Section */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div>
-            <h1 className="text-3xl font-extrabold tracking-tight text-slate-900">
-              Student Directory
-            </h1>
-            <p className="text-slate-500 mt-2 text-lg">
-              Manage student profiles and enrollment details.
-            </p>
+      <main className="max-w-6xl mx-auto px-6 py-6 space-y-5 relative z-10">
+        <div className="flex items-center gap-3">
+          <div className="relative flex-1 max-w-sm">
+            <svg className="absolute left-3 top-2.5 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            <input
+              type="text"
+              placeholder="Search by name, ID, email or enrollment..."
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
+              className="w-full pl-9 pr-3 py-2 border border-slate-300 rounded-lg text-sm bg-white/80 backdrop-blur-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all"
+            />
           </div>
-
-          <Link
-            href="/admin/student/add"
-            className="group relative inline-flex items-center justify-center px-6 py-3 text-base font-medium text-white bg-blue-600 rounded-full shadow-lg hover:bg-blue-700 hover:shadow-blue-500/30 transition-all duration-300 transform hover:-translate-y-0.5"
-          >
-            <span className="mr-2 text-xl">+</span> Add New Student
+          {searchQuery && (
+            <button onClick={() => setSearchQuery('')} className="text-sm text-gray-500 hover:text-gray-700 underline">Clear</button>
+          )}
+          <Link href="/admin/dashboard" className="ml-auto text-sm text-gray-500 hover:text-gray-700 flex items-center gap-1">
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+            Back
           </Link>
         </div>
 
-        {/* Content Section */}
-        <div className="glass-card overflow-hidden backdrop-blur-xl bg-white/80 border border-slate-200/60 shadow-xl rounded-2xl">
+        <div className="bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition-shadow overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="bg-slate-50/80 border-b border-slate-200 text-xs uppercase tracking-wider text-slate-500 font-semibold">
-                  <th className="px-6 py-5 text-center w-16">#</th>
-                  <th className="px-6 py-5">Student Profile</th>
-                  <th className="px-6 py-5">Contact Info</th>
-                  <th className="px-6 py-5 text-center">Enrollment No.</th>
-                  <th className="px-6 py-5 text-right">Joined</th>
-                  <th className="px-6 py-5 text-center">Actions</th>
+            <table className="w-full text-sm text-left">
+              <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 text-xs uppercase tracking-wider font-semibold">
+                <tr>
+                  <th className="px-5 py-4 w-12 rounded-tl-lg">#</th>
+                  <th className="px-5 py-4">Student</th>
+                  <th className="px-5 py-4">Email</th>
+                  <th className="px-5 py-4">Mobile</th>
+                  <th className="px-5 py-4">Enrollment No.</th>
+                  <th className="px-5 py-4">Joined</th>
+                  <th className="px-5 py-4 text-center rounded-tr-lg">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
-                {students.length === 0 ? (
+              <tbody className="divide-y divide-gray-100">
+                {loading ? (
+                  <tr><td colSpan={7} className="px-5 py-10 text-center text-gray-400">Loading...</td></tr>
+                ) : filteredStudents.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="px-6 py-16 text-center">
-                      <div className="flex flex-col items-center justify-center space-y-4">
-                        <div className="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center text-4xl">
-                          🎓
+                    <td colSpan={7} className="px-5 py-10 text-center text-gray-400">
+                      {searchQuery ? 'No students found.' : 'No students added yet.'}
+                      {!searchQuery && (
+                        <div className="mt-2">
+                          <Link href="/admin/student/add" className="text-blue-600 hover:underline text-sm">Add one now</Link>
                         </div>
-                        <h3 className="text-xl font-medium text-slate-900">No students found</h3>
-                        <p className="text-slate-500 max-w-sm">
-                          Get started by adding your first student to the system.
-                        </p>
-                        <Link
-                          href="/admin/student/add"
-                          className="mt-6 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                        >
-                          Add Student
+                      )}
+                    </td>
+                  </tr>
+                ) : filteredStudents.map((s, i) => (
+                  <tr key={s.studentid} className="hover:bg-gray-50 transition-colors">
+                    <td className="px-5 py-3 text-gray-400">{i + 1}</td>
+                    <td className="px-5 py-3">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-full bg-green-100 text-green-700 flex items-center justify-center text-sm font-semibold flex-shrink-0">
+                          {s.studentname.charAt(0).toUpperCase()}
+                        </div>
+                        <div>
+                          <p className="font-medium text-gray-800">{s.studentname}</p>
+                          <p className="text-xs text-gray-400">ID: {s.studentid}</p>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-5 py-3 text-gray-600">{s.emailaddress || <span className="text-gray-300 italic">—</span>}</td>
+                    <td className="px-5 py-3 text-gray-600">{s.mobileno || <span className="text-gray-300 italic">—</span>}</td>
+                    <td className="px-5 py-3">
+                      <span className="px-2 py-0.5 bg-gray-100 border border-gray-200 rounded text-xs font-mono text-gray-700">{s.enrollmentno}</span>
+                    </td>
+                    <td className="px-5 py-3 text-gray-500">
+                      {s.created ? new Date(s.created).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : '—'}
+                    </td>
+                    <td className="px-5 py-3 text-center">
+                      <div className="flex items-center justify-center gap-2">
+                        <Link href={`/admin/student/${s.studentid}/edit`} className="px-3 py-1 text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200 rounded hover:bg-blue-100 transition-colors">
+                          Edit
                         </Link>
+                        <button
+                          onClick={() => setDeleteConfirm({ id: s.studentid, name: s.studentname })}
+                          className="px-3 py-1 text-xs font-medium bg-red-50 text-red-700 border border-red-200 rounded hover:bg-red-100 transition-colors"
+                        >
+                          Delete
+                        </button>
                       </div>
                     </td>
                   </tr>
-                ) : (
-                  students.map((s, index) => (
-                    <tr
-                      key={s.studentid}
-                      className="group hover:bg-blue-50/50 transition-colors duration-200"
-                    >
-                      <td className="px-6 py-5 text-center text-slate-400 font-medium">
-                        {index + 1}
-                      </td>
-                      <td className="px-6 py-5">
-                        <div className="flex items-center gap-4">
-                          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-100 to-cyan-100 text-blue-600 flex items-center justify-center text-sm font-bold shadow-sm">
-                            {s.studentname.charAt(0).toUpperCase()}
-                          </div>
-                          <div>
-                            <p className="text-base font-semibold text-slate-900 group-hover:text-blue-700 transition-colors">
-                              {s.studentname}
-                            </p>
-                            <span className="text-xs px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 border border-slate-200 inline-block mt-1">
-                              ID: {s.studentid}
-                            </span>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-5">
-                        <div className="flex flex-col space-y-1">
-                          {s.emailaddress ? (
-                            <a href={`mailto:${s.emailaddress}`} className="text-sm text-slate-600 hover:text-blue-600 flex items-center gap-2 transition-colors">
-                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
-                              {s.emailaddress}
-                            </a>
-                          ) : (
-                            <span className="text-sm text-slate-400 italic">No email</span>
-                          )}
-                          {s.mobileno && (
-                            <span className="text-sm text-slate-500 flex items-center gap-2">
-                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
-                              {s.mobileno}
-                            </span>
-                          )}
-                        </div>
-                      </td>
-                      <td className="px-6 py-5 text-center">
-                        <span className="inline-flex items-center px-3 py-1 rounded-md text-xs font-medium bg-slate-100 text-slate-700 border border-slate-200 font-mono tracking-wide">
-                          {s.enrollmentno}
-                        </span>
-                      </td>
-                      <td className="px-6 py-5 text-right text-sm text-slate-500 tab-nums">
-                        {s.created ? new Date(s.created).toLocaleDateString('en-US', {
-                          year: 'numeric',
-                          month: 'short',
-                          day: 'numeric'
-                        }) : '-'}
-                      </td>
-                      <td className="px-6 py-5 text-center">
-                        <div className="flex items-center justify-center gap-2">
-                          <Link
-                            href={`/admin/student/${s.studentid}/edit`}
-                            className="inline-flex items-center px-3 py-1 rounded-md text-xs font-medium bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 transition-colors"
-                          >
-                            ✎ Edit
-                          </Link>
-                        </div>
-                      </td>
-                    </tr>
-                  ))
-                )}
+                ))}
               </tbody>
             </table>
           </div>
-
-          <div className="bg-slate-50/50 px-6 py-4 border-t border-slate-200 flex items-center justify-between">
-            <p className="text-sm text-slate-500">
-              Showing <span className="font-medium text-slate-900">{students.length}</span> students
-            </p>
+          <div className="px-5 py-3 border-t border-gray-100 bg-gray-50 text-xs text-gray-500">
+            Showing <strong>{filteredStudents.length}</strong> of <strong>{students.length}</strong> students
           </div>
         </div>
+      </main>
 
-        {/* Back Link */}
-        <div className="pt-4">
-          <Link
-            href="/admin/dashboard"
-            className="inline-flex items-center text-sm font-medium text-slate-500 hover:text-slate-800 transition-colors"
-          >
-            <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-            Back to Dashboard
-          </Link>
+      {deleteConfirm && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl w-full max-w-sm p-6">
+            <h3 className="text-lg font-bold text-gray-800 mb-2">Delete Student?</h3>
+            <p className="text-sm text-gray-500 mb-5">
+              Are you sure you want to delete <strong>{deleteConfirm.name}</strong>? This cannot be undone.
+            </p>
+            <div className="flex gap-3">
+              <button onClick={() => setDeleteConfirm(null)} disabled={deleting} className="flex-1 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-md transition-colors disabled:opacity-60">
+                Cancel
+              </button>
+              <button onClick={handleDelete} disabled={deleting} className="flex-1 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-md transition-colors disabled:opacity-60">
+                {deleting ? 'Deleting...' : 'Delete'}
+              </button>
+            </div>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

@@ -2,11 +2,10 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 
-export default function StaffLogin() {
+export default function AdminLogin() {
   const [email, setEmail] = useState("");
-  const [mobileNo, setMobileNo] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -14,17 +13,17 @@ export default function StaffLogin() {
   const handleLogin = async () => {
     setError("");
     if (!email.trim()) { setError("Please enter your email."); return; }
-    if (!mobileNo.trim()) { setError("Please enter your mobile number."); return; }
+    if (!password.trim()) { setError("Please enter your password."); return; }
     setLoading(true);
     try {
-      const res = await fetch("/api/staff/login", {
+      const res = await fetch("/api/admin/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, mobileNo }),
+        body: JSON.stringify({ email, password }),
       });
       const data = await res.json();
       if (data.success) {
-        router.push(`/staff/${data.staffId}`);
+        router.push("/admin/dashboard");
       } else {
         setError(data.message || "Invalid credentials. Please try again.");
       }
@@ -36,19 +35,19 @@ export default function StaffLogin() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-cyan-50 flex items-center justify-center p-4 font-sans relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center p-4 font-sans relative overflow-hidden">
       <div className="absolute top-[-10%] left-[-10%] w-1/2 h-1/2 bg-blue-400/10 rounded-full blur-[100px]" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-1/2 h-1/2 bg-cyan-400/10 rounded-full blur-[100px]" />
+      <div className="absolute bottom-[-10%] right-[-10%] w-1/2 h-1/2 bg-purple-400/10 rounded-full blur-[100px]" />
       
       <div className="bg-white/80 backdrop-blur-md w-full max-w-sm rounded-2xl shadow-xl border border-white/50 p-8 relative z-10 transition-all hover:shadow-2xl hover:bg-white">
         <div className="text-center mb-6">
           <div className="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center mx-auto mb-3">
             <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
             </svg>
           </div>
-          <h1 className="text-2xl font-bold text-gray-800">Staff Login</h1>
-          <p className="text-gray-500 text-sm mt-1">Access your mentoring dashboard</p>
+          <h1 className="text-2xl font-bold text-gray-800">Admin Login</h1>
+          <p className="text-gray-500 text-sm mt-1">Student Mentoring System</p>
         </div>
 
         {error && (
@@ -62,7 +61,7 @@ export default function StaffLogin() {
             <label className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
             <input
               type="email"
-              placeholder="staff@email.com"
+              placeholder="admin@email.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               disabled={loading}
@@ -71,12 +70,12 @@ export default function StaffLogin() {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Mobile Number</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
             <input
-              type="text"
-              placeholder="Enter your mobile number"
-              value={mobileNo}
-              onChange={(e) => setMobileNo(e.target.value)}
+              type="password"
+              placeholder="Enter password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               disabled={loading}
               onKeyDown={(e) => e.key === "Enter" && handleLogin()}
               className="w-full px-3 py-2.5 border border-gray-300 rounded-md text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-50"
@@ -85,15 +84,10 @@ export default function StaffLogin() {
           <button
             onClick={handleLogin}
             disabled={loading}
-            className="w-full py-2.5 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-semibold text-sm rounded-xl shadow-md hover:shadow-lg transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed transform hover:-translate-y-0.5"
+            className="w-full py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold text-sm rounded-xl shadow-md hover:shadow-lg transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed transform hover:-translate-y-0.5"
           >
             {loading ? "Signing in..." : "Sign In"}
           </button>
-          <div className="text-center">
-            <Link href="/" className="text-sm text-gray-400 hover:text-gray-600 transition-colors">
-              ← Back to Home
-            </Link>
-          </div>
         </div>
       </div>
     </div>
