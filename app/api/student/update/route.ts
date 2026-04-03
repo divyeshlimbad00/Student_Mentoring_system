@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 export async function PUT(request: NextRequest) {
   try {
     const body = await request.json();
-    const { studentid, studentname, enrollmentno, emailaddress, mobileno } = body;
+    const { studentid, studentname, enrollmentno, emailaddress, mobileno, password } = body;
 
     if (!studentid) {
       return NextResponse.json(
@@ -20,6 +20,7 @@ export async function PUT(request: NextRequest) {
         enrollmentno,
         emailaddress,
         mobileno,
+        password,
         modified: new Date(),
       },
     });

@@ -3,20 +3,23 @@ import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   try {
-     const { email, mobileNo } = await req.json();
+     const { identifier, password } = await req.json();
 
     // Validate input
-     if (!email || !mobileNo) {
+     if (!identifier || !password) {
       return NextResponse.json(
         { success: false, message: "All fields are required" },
         { status: 400 }
       );
     }
 
-    // Find staff by email address
+    // Find staff by email or mobile
     const staff = await prisma.staff.findFirst({
-      where: { 
-        emailaddress: email.trim().toLowerCase(),
+      where: {
+        OR: [
+          { emailaddress: identifier.trim().toLowerCase() },
+          { mobileno: identifier.trim() }
+        ]
       },
     });
 
@@ -27,11 +30,10 @@ export async function POST(req: Request) {
       );
     }
 
-
-    // Verify mobile number
-    if (staff.mobileno && staff.mobileno !== mobileNo.trim()) {
+    // Verify password
+    if (staff.password !== password.trim()) {
       return NextResponse.json(
-        { success: false, message: "Mobile number does not match" },
+        { success: false, message: "Password is incorrect" },
         { status: 401 }
       );
     }

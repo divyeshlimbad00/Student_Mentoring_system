@@ -12,12 +12,12 @@ export default function EditStaff() {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
-  const [formData, setFormData] = useState({ staffname: '', emailaddress: '', mobileno: '' });
+  const [formData, setFormData] = useState({ staffname: '', emailaddress: '', mobileno: '', password: '' });
 
   useEffect(() => {
     fetch(`/api/staff/${staffId}`)
       .then(r => { if (!r.ok) throw new Error(); return r.json(); })
-      .then(data => setFormData({ staffname: data.staffname || '', emailaddress: data.emailaddress || '', mobileno: data.mobileno || '' }))
+      .then(data => setFormData({ staffname: data.staffname || '', emailaddress: data.emailaddress || '', mobileno: data.mobileno || '', password: data.password || '' }))
       .catch(() => setError('Failed to load staff details.'))
       .finally(() => setLoading(false));
   }, [staffId]);
@@ -102,6 +102,15 @@ export default function EditStaff() {
               <input id="emailaddress" name="emailaddress" type="email"
                 value={formData.emailaddress} onChange={handleChange}
                 placeholder="e.g. ramesh.patel@college.edu"
+                className="w-full px-4 py-3 bg-white/50 border border-gray-200 rounded-xl text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 focus:bg-white transition-all shadow-sm font-medium"
+              />
+            </div>
+
+            <div>
+              <label htmlFor="password" className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Password <span className="text-red-500">*</span></label>
+              <input id="password" name="password" type="text" required
+                value={formData.password} onChange={handleChange}
+                placeholder="Enter password"
                 className="w-full px-4 py-3 bg-white/50 border border-gray-200 rounded-xl text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 focus:bg-white transition-all shadow-sm font-medium"
               />
             </div>

@@ -12,7 +12,7 @@ export default function EditStudent() {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
-  const [formData, setFormData] = useState({ studentname: '', enrollmentno: '', emailaddress: '', mobileno: '' });
+  const [formData, setFormData] = useState({ studentname: '', enrollmentno: '', emailaddress: '', password: '', mobileno: '' });
 
   useEffect(() => {
     fetch(`/api/student/${studentId}`)
@@ -21,6 +21,7 @@ export default function EditStudent() {
         studentname: data.studentname || '',
         enrollmentno: data.enrollmentno || '',
         emailaddress: data.emailaddress || '',
+        password: data.password || '',
         mobileno: data.mobileno || '',
       }))
       .catch(() => setError('Failed to load student details.'))
@@ -97,6 +98,16 @@ export default function EditStudent() {
               <label htmlFor="emailaddress" className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
               <input id="emailaddress" name="emailaddress" type="email"
                 value={formData.emailaddress} onChange={handleChange}
+                className="w-full px-3 py-2.5 border border-gray-300 rounded-md text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
+
+            <div>
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+                Password <span className="text-red-500">*</span>
+              </label>
+              <input id="password" name="password" type="text" required
+                value={formData.password} onChange={handleChange}
                 className="w-full px-3 py-2.5 border border-gray-300 rounded-md text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
             </div>

@@ -5,22 +5,22 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 export default function StaffLogin() {
-  const [email, setEmail] = useState("");
-  const [mobileNo, setMobileNo] = useState("");
+  const [identifier, setIdentifier] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   const handleLogin = async () => {
     setError("");
-    if (!email.trim()) { setError("Please enter your email."); return; }
-    if (!mobileNo.trim()) { setError("Please enter your mobile number."); return; }
+    if (!identifier.trim()) { setError("Please enter your email or mobile number."); return; }
+    if (!password.trim()) { setError("Please enter your password."); return; }
     setLoading(true);
     try {
       const res = await fetch("/api/staff/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, mobileNo }),
+        body: JSON.stringify({ identifier, password }),
       });
       const data = await res.json();
       if (data.success) {
@@ -59,24 +59,24 @@ export default function StaffLogin() {
 
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Email or Mobile Number</label>
             <input
-              type="email"
-              placeholder="staff@email.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              type="text"
+              placeholder="staff@email.com or 1234567890"
+              value={identifier}
+              onChange={(e) => setIdentifier(e.target.value)}
               disabled={loading}
               onKeyDown={(e) => e.key === "Enter" && handleLogin()}
               className="w-full px-3 py-2.5 border border-gray-300 rounded-md text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-50"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Mobile Number</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
             <input
-              type="text"
-              placeholder="Enter your mobile number"
-              value={mobileNo}
-              onChange={(e) => setMobileNo(e.target.value)}
+              type="password"
+              placeholder="Enter your password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               disabled={loading}
               onKeyDown={(e) => e.key === "Enter" && handleLogin()}
               className="w-full px-3 py-2.5 border border-gray-300 rounded-md text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-50"
