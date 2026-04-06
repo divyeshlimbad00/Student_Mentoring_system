@@ -1,10 +1,23 @@
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import { unstable_noStore as noStore } from "next/cache";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export default async function AllocatePage() {
-  const students = await prisma.student.findMany({ orderBy: { studentname: "asc" } });
-  const staffs = await prisma.staff.findMany({ orderBy: { staffname: "asc" } });
+  noStore();
+  // Filter out students who already have an active mentorship allocation
+  const students = await prisma.student.findMany({ 
+    where: {
+      studentmentor: {
+        none: {},
+      },
+    },
+    orderBy: { created: "desc" } 
+  });
+  const staffs = await prisma.staff.findMany({ orderBy: { created: "desc" } });
 
   async function createAllocation(formData: FormData) {
     "use server";
